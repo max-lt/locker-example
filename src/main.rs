@@ -280,15 +280,12 @@ impl V8ThreadPool {
                   req.total_steps
                 ));
 
-                // Enter isolate and acquire lock
-                unsafe {
-                  (&pooled.isolate as &v8::Isolate).enter();
-                }
-                let _locker = v8::Locker::new(&pooled.isolate);
+                // Acquire lock - Locker handles enter/exit automatically
+                let mut locker = v8::Locker::new(&mut pooled.isolate);
 
-                // Execute JS
+                // Execute JS - access Isolate through Locker's Deref
                 let js_result = {
-                  let scope = std::pin::pin!(v8::HandleScope::new(&mut pooled.isolate));
+                  let scope = std::pin::pin!(v8::HandleScope::new(&mut *locker));
                   let scope = &mut scope.init();
                   let context = v8::Context::new(scope, Default::default());
                   let scope = &mut v8::ContextScope::new(scope, context);
@@ -332,11 +329,8 @@ impl V8ThreadPool {
                   result.to_rust_string_lossy(scope)
                 };
 
-                // Release lock and exit isolate
-                drop(_locker);
-                unsafe {
-                  (&pooled.isolate as &v8::Isolate).exit();
-                }
+                // Locker drops automatically, releasing lock
+                drop(locker);
 
                 log_v8(req.worker_id, &thread_name, isolate_id, &format!("DONE: {}", js_result.chars().take(50).collect::<String>()));
 
