@@ -1,2 +1,5 @@
 [env]
-RUSTY_V8_ARCHIVE = "/workspaces/rusty_v8/target/release/gn_out/obj/librusty_v8.a"
+RUSTY_V8_ARCHIVE = "/tmp/rusty_v8_binaries/librusty_v8.a"
+RUSTY_V8_SRC_BINDING_PATH = "/tmp/rusty_v8_binaries/src_binding.rs"
+
+# RUSTY_V8_ARCHIVE = "/workspaces/rusty_v8/target/release/gn_out/obj/librusty_v8.a"

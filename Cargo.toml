@@ -2,9 +2,12 @@
 name = "locker-example"
 version = "0.1.0"
 edition = "2024"
+default-run="locker-example"
 
 [dependencies]
-v8 = { path = "/workspaces/rusty_v8" }
+#v8 = { path = "/workspaces/rusty_v8" }
+v8 = { path = "/Users/max/Documents/forks/rusty_v8", features = ["v8_enable_pointer_compression"] }
+
 tokio = { version = "1", features = ["full"] }
 futures = "0.3"
 rand = "0.9.2"
